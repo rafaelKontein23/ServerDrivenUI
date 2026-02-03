@@ -1,2 +1,4 @@
 jdk:
   - openjdk17
+install:
+  - ./gradlew :sdui-engine:publishToMavenLocal -Dskip.tests
