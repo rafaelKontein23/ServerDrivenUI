@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.dagger.hilt)
-    alias(libs.plugins.google.services)
 }
 
 android {
@@ -48,6 +47,7 @@ dependencies {
     ksp(libs.hilt.compiler)
 
     // Lifecicle
+    implementation(libs.lifecycle.viewmodel)
     implementation(libs.gson)
 
     // Glide

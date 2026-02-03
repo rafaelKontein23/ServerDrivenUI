@@ -1,9 +1,9 @@
 package com.example.sdui_engine.data.mapper
 
-import com.example.sdui_engine.domain.model.props.ButtonProps
-import com.example.sdui_engine.domain.model.props.CompoundTextProps
-import com.example.sdui_engine.domain.model.props.InputProps
-import com.example.sdui_engine.domain.model.props.TextProps
+import com.example.sdui_engine.data.model.props.ButtonProps
+import com.example.sdui_engine.data.model.props.CompoundTextProps
+import com.example.sdui_engine.data.model.props.InputProps
+import com.example.sdui_engine.data.model.props.TextProps
 
 object PropsMapper {
 
@@ -24,8 +24,13 @@ object PropsMapper {
     fun mapInput(props: Map<String, String>) = InputProps(
         id = props["id"].orEmpty(),
         hint = props["hint"].orEmpty(),
-        inputType = props["inputType"].orEmpty(),
-        accessibilityText = props["accessibility_text"].orEmpty()
+        inputKeyboardType = props["inputKeyboardType"].orEmpty(),
+        accessibilityText = props["accessibility_text"].orEmpty(),
+
+        marginTop = props["margin_top"]?.toIntOrNull() ?: 0,
+        marginBottom = props["margin_bottom"]?.toIntOrNull() ?: 0,
+        marginLeft = props["margin_left"]?.toIntOrNull() ?: 0,
+        marginRight = props["margin_right"]?.toIntOrNull() ?: 0
     )
 
     fun mapButton(props: Map<String, String>) = ButtonProps(
@@ -56,5 +61,4 @@ object PropsMapper {
         marginLeft = props["margin_left"]?.toInt() ?: 0,
         marginRight = props["margin_right"]?.toInt() ?: 0
     )
-
 }
