@@ -1,7 +1,7 @@
 package com.example.sdui_engine.domain.usecase
 
 import com.example.sdui_engine.domain.result.LayoutResult
-import com.example.sdui_engine.domain.remoteconfig.RemoteConfigKeys
+import com.example.sdui_engine.data.model.RemoteConfigKeys
 import com.example.sdui_engine.domain.repository.RemoteConfigRepository
 import javax.inject.Inject
 

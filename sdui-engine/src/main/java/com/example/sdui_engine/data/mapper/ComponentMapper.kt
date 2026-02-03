@@ -1,8 +1,8 @@
 package com.example.sdui_engine.data.mapper
 
 import com.example.sdui_engine.data.dto.ComponentDto
-import com.example.sdui_engine.domain.model.ComponentType
-import com.example.sdui_engine.domain.model.SduiComponent
+import com.example.sdui_engine.data.model.ComponentType
+import com.example.sdui_engine.data.model.SduiComponent
 
 object ComponentMapper {
 

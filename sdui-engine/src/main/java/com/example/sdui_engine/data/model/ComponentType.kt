@@ -1,4 +1,4 @@
-package com.example.sdui_engine.domain.model
+package com.example.sdui_engine.data.model
 
 enum class ComponentType {
     TEXT,

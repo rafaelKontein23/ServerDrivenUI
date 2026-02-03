@@ -20,6 +20,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Server Driven UI"
+rootProject.name = "ServerDrivenUI"
 include(":app")
 include(":sdui-engine")
