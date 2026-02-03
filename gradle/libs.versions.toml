@@ -78,3 +78,4 @@ ksp                 = { id = "com.google.devtools.ksp",      version.ref = "ksp"
 google-services = { id = "com.google.gms.google-services", version.ref = "googleServices" }
 dagger-hilt =  {id ="com.google.dagger.hilt.android", version.ref = "dagger-hilt"}
 android-library = { id = "com.android.library", version.ref = "agp" }
+maven-publish = { id = "maven-publish" }

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.dagger.hilt)
+    alias(libs.plugins.maven.publish)
 }
 
 android {
@@ -31,6 +32,20 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
+    }
+
+    afterEvaluate {
+        publishing {
+            publications {
+                create<MavenPublication>("release") {
+                    from(components["release"])
+
+                    groupId = "com.github.rafaelKontein23"
+                    artifactId = "sdui-engine"
+                    version = "1.0.0"
+                }
+            }
+        }
     }
 }
 
