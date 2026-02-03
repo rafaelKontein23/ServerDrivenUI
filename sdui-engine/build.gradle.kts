@@ -34,16 +34,20 @@ android {
         jvmTarget = "17"
     }
 
-    afterEvaluate {
-        publishing {
-            publications {
-                create<MavenPublication>("release") {
-                    from(components["release"])
+    publishing {
+        singleVariant("release")
+    }
+}
 
-                    groupId = "com.github.rafaelKontein23"
-                    artifactId = "sdui-engine"
-                    version = "1.0.0"
-                }
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+
+                groupId = "com.github.rafaelKontein23"
+                artifactId = "sdui-engine"
+                version = "1.0.1"
             }
         }
     }
