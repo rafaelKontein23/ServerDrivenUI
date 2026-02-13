@@ -4,7 +4,8 @@ enum class ComponentType {
     TEXT,
     INPUT,
     BUTTON,
-    COMPOUND_TEXT;
+    COMPOUND_TEXT,
+    ICON;
 
     companion object {
         fun from(value: String): ComponentType? =

@@ -33,7 +33,7 @@ kotlinxCoroutinesCore = "1.10.2"
 firebaseBom = "33.5.1"
 
 # Design System
-mylibrary = "v1.0.5"
+mylibrary = "v1.0.14"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }

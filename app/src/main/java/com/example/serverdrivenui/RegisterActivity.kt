@@ -1,5 +1,6 @@
 package com.example.serverdrivenui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.LinearLayout
@@ -37,11 +38,14 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun handleSduiActions(actionId: String) {
         when (actionId) {
-            "btn_login" ->
-                Toast.makeText(this, "Botão entrar clicado!", Toast.LENGTH_SHORT).show()
+            "btn_register" ->
+                Toast.makeText(this, "Botão cadastrar clicado!", Toast.LENGTH_SHORT).show()
 
-            "tv_forgot_password" ->
-                Toast.makeText(this, "Esqueceu a senha?", Toast.LENGTH_SHORT).show()
+            "btn_back" -> {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         }
     }
 }

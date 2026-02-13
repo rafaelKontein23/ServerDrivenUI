@@ -2,6 +2,7 @@ package com.example.sdui_engine.data.mapper
 
 import com.example.sdui_engine.data.model.props.ButtonProps
 import com.example.sdui_engine.data.model.props.CompoundTextProps
+import com.example.sdui_engine.data.model.props.IconProps
 import com.example.sdui_engine.data.model.props.InputProps
 import com.example.sdui_engine.data.model.props.TextProps
 
@@ -60,5 +61,19 @@ object PropsMapper {
         marginBottom = props["margin_bottom"]?.toInt() ?: 0,
         marginLeft = props["margin_left"]?.toInt() ?: 0,
         marginRight = props["margin_right"]?.toInt() ?: 0
+    )
+
+    fun mapIcon(props: Map<String, String>) = IconProps(
+        id = props["id"].orEmpty(),
+        iconRes = props["icon_res"].orEmpty(),
+        iconColor = props["icon_color"].orEmpty(),
+        size = props["size"]?.toIntOrNull() ?: 24,
+        action = props["action"].orEmpty(),
+        accessibilityText = props["accessibility_text"].orEmpty(),
+        marginTop = props["margin_top"]?.toIntOrNull() ?: 0,
+        marginBottom = props["margin_bottom"]?.toIntOrNull() ?: 0,
+        marginLeft = props["margin_left"]?.toIntOrNull() ?: 0,
+        marginRight = props["margin_right"]?.toIntOrNull() ?: 0,
+        gravity = props["gravity"] ?: "START"
     )
 }
