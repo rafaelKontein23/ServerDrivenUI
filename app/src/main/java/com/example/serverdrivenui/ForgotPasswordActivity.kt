@@ -1,6 +1,6 @@
 package com.example.serverdrivenui
 
-import android.content.Intent
+import android.util.Log
 import android.os.Bundle
 import android.widget.LinearLayout
 import android.widget.Toast
@@ -10,17 +10,15 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class LoginActivity : AppCompatActivity() {
+class ForgotPasswordActivity : AppCompatActivity() {
 
     @Inject
     lateinit var sduiHostController: SDUIHostController
-
-    private val viewModel: LoginViewModel by viewModels()
+    private val viewModel: ForgotPasswordViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_forgot_password)
 
         val container = findViewById<LinearLayout>(R.id.sdui_container)
 
@@ -38,17 +36,14 @@ class LoginActivity : AppCompatActivity() {
 
     private fun handleSduiActions(actionId: String) {
         when (actionId) {
-            "btn_login" ->
-                Toast.makeText(this, "Botão entrar clicado!", Toast.LENGTH_SHORT).show()
-
-            "tv_forgot_password" -> {
-                val intent = Intent(this, ForgotPasswordActivity::class.java)
-                startActivity(intent)
+            "btn_back" -> {
+                finish()
             }
-
-            "tv_register" -> {
-                val intent = Intent(this, RegisterActivity::class.java)
-                startActivity(intent)
+            "btn_send_recovery" -> {
+                Toast.makeText(this, "Link enviado com sucesso!", Toast.LENGTH_LONG).show()
+            }
+            else -> {
+                Log.d("SDUI_DEBUG", "Ação não mapeada: $actionId")
             }
         }
     }

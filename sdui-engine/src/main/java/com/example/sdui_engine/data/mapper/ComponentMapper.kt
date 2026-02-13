@@ -21,6 +21,9 @@ object ComponentMapper {
 
             ComponentType.COMPOUND_TEXT ->
                 SduiComponent.CompoundText(PropsMapper.mapCompoundText(dto.props))
+
+            ComponentType.ICON ->
+                SduiComponent.Icon(PropsMapper.mapIcon(dto.props))
         }
     }
 }

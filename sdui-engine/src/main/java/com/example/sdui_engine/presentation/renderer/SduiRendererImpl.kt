@@ -1,5 +1,6 @@
 package com.example.sdui_engine.presentation.renderer
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
 import android.text.InputType
@@ -8,9 +9,12 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.text.style.StyleSpan
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.mylibrary.ds.button.DsButton
@@ -35,10 +39,71 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
                 is SduiComponent.Input -> createInputView(container, component)
                 is SduiComponent.Button -> createButtonView(container, component, onAction)
                 is SduiComponent.CompoundText -> createCompoundTextView(container, component, onAction)
+                is SduiComponent.Icon -> createIconView(container, component, onAction)
             }
             container.addView(view)
         }
     }
+
+    private fun createIconView(
+        container: ViewGroup,
+        component: SduiComponent.Icon,
+        onAction: (String) -> Unit
+    ): View {
+        val p = component.props
+        val context = container.context
+
+        return ImageButton(context).apply {
+
+            val appPackage = context.applicationContext.packageName
+            val resId = context.resources.getIdentifier(
+                p.iconRes,
+                "drawable",
+                appPackage
+            )
+
+            if (resId != 0) {
+                setImageResource(resId)
+            } else {
+                Log.e("SDUI_ICON", "Drawable não encontrado: ${p.iconRes}")
+            }
+
+            if (p.iconColor.isNotEmpty()) {
+                imageTintList =
+                    ColorStateList.valueOf(parseSafeColor(p.iconColor))
+            }
+
+            scaleType = ImageView.ScaleType.CENTER_INSIDE
+            adjustViewBounds = true
+
+            val outValue = TypedValue()
+            context.theme.resolveAttribute(
+                android.R.attr.selectableItemBackgroundBorderless,
+                outValue,
+                true
+            )
+            setBackgroundResource(outValue.resourceId)
+
+            contentDescription = p.accessibilityText
+
+            layoutParams = LinearLayout.LayoutParams(
+                p.size.dp(context),
+                p.size.dp(context)
+            ).apply {
+                setMargins(
+                    p.marginLeft.dp(context),
+                    p.marginTop.dp(context),
+                    p.marginRight.dp(context),
+                    p.marginBottom.dp(context)
+                )
+            }
+
+            setOnClickListener {
+                onAction(p.id)
+            }
+        }
+    }
+
     private fun createTextView(
         container: ViewGroup,
         component: SduiComponent.Text,
@@ -71,38 +136,27 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
     private fun createInputView(container: ViewGroup, component: SduiComponent.Input): View {
         return DsInput(container.context).apply {
             val p = component.props
-
-            Log.d("SDUI_INPUT_RAW", "Input ID: ${p.id}")
-            Log.d("SDUI_INPUT_RAW", "inputKeyboardType cru do JSON: '${p.inputKeyboardType}' (type: ${p.inputKeyboardType?.javaClass?.simpleName ?: "null"})")
-            Log.d("SDUI_INPUT_RAW", "inputType fallback (se existir): '${p.inputKeyboardType ?: "não tem"}'")
-            Log.d("SDUI_INPUT_RAW", "margin_top: '${p.marginTop}' (type: ${p.marginTop?.javaClass?.simpleName})")
-            Log.d("SDUI_INPUT_RAW", "margin_left: '${p.marginLeft}', margin_right: '${p.marginRight}'")
-
-            val normalizedType = p.inputKeyboardType?.lowercase() ?: p.inputKeyboardType?.lowercase() ?: "desconhecido"
-            Log.d("SDUI_INPUT", "Tipo normalizado usado no when: '$normalizedType'")
+            val normalizedType = p.inputKeyboardType?.lowercase() ?: "text"
 
             id = View.generateViewId()
             hint = p.hint
-            contentDescription = p.accessibilityText
 
-            Log.d("SDUI_INPUT", "InputType atual ANTES do set: ${inputType}")
-
-            when (normalizedType) {
-                "email" -> {
-                    Log.d("SDUI_INPUT", "Entrou no branch EMAIL")
-                    setInputType(InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS)
-                }
-                "password" -> {
-                    Log.d("SDUI_INPUT", "Entrou no branch PASSWORD → setando TYPE_TEXT_VARIATION_PASSWORD")
-                    setInputType(InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_PASSWORD)
-                }
-                else -> {
-                    Log.d("SDUI_INPUT", "Entrou no branch DEFAULT (TEXT)")
-                    setInputType(InputType.TYPE_CLASS_TEXT)
-                }
+            val typeEnum = when (normalizedType) {
+                "cpf"      -> DsInput.KeyboardType.CPF
+                "number"   -> DsInput.KeyboardType.NUMBER
+                "phone"    -> DsInput.KeyboardType.PHONE
+                "email"    -> DsInput.KeyboardType.EMAIL
+                "password" -> DsInput.KeyboardType.PASSWORD
+                "date"     -> DsInput.KeyboardType.DATE
+                else       -> DsInput.KeyboardType.TEXT
             }
+            setKeyboardType(typeEnum)
 
-            Log.d("SDUI_INPUT", "InputType FINAL após set: ${inputType}")
+            if (typeEnum == DsInput.KeyboardType.PASSWORD) {
+                if (hint.isNullOrEmpty()) hint = p.accessibilityText
+            } else {
+                contentDescription = p.accessibilityText
+            }
 
             layoutParams = createLayoutParams(
                 p.marginLeft.dp(context),
@@ -110,10 +164,9 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
                 p.marginRight.dp(context),
                 p.marginBottom.dp(context)
             )
-
-            Log.d("SDUI_INPUT", "Input ${p.id} margins px → top: ${(layoutParams as LinearLayout.LayoutParams).topMargin}")
         }
     }
+
     private fun createButtonView(
         container: ViewGroup,
         component: SduiComponent.Button,
