@@ -9,7 +9,7 @@ class SDUIHostView @Inject constructor(
     private val renderer: SduiRenderer
 ) {
 
-    fun render(
+    suspend fun render(
         state: SDUIViewState,
         container: ViewGroup,
         onAction: (String) -> Unit
