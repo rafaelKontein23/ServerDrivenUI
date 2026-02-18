@@ -27,7 +27,23 @@ import javax.inject.Inject
 
 class SduiRendererImpl @Inject constructor() : SduiRenderer {
 
-    override fun render(
+    private val viewRegistry = mutableMapOf<String, View>()
+
+
+
+    override fun findView(id: String): View? = viewRegistry[id]
+
+    override fun getAllInputData(): Map<String, String> {
+        return viewRegistry.filterValues { it is DsInput }
+            .mapValues { (it.value as DsInput).text.toString() }
+    }
+
+    override fun clearAllErrors() {
+        viewRegistry.clear()
+    }
+
+
+    override suspend fun render(
         components: List<SduiComponent>,
         container: ViewGroup,
         onAction: (String) -> Unit
@@ -36,9 +52,14 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
         components.forEach { component ->
             val view = when (component) {
                 is SduiComponent.Text -> createTextView(container, component, onAction)
-                is SduiComponent.Input -> createInputView(container, component)
+                is SduiComponent.Input -> createInputView(container, component, onAction)
                 is SduiComponent.Button -> createButtonView(container, component, onAction)
-                is SduiComponent.CompoundText -> createCompoundTextView(container, component, onAction)
+                is SduiComponent.CompoundText -> createCompoundTextView(
+                    container,
+                    component,
+                    onAction
+                )
+
                 is SduiComponent.Icon -> createIconView(container, component, onAction)
             }
             container.addView(view)
@@ -133,7 +154,11 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
         }
     }
 
-    private fun createInputView(container: ViewGroup, component: SduiComponent.Input): View {
+    private fun createInputView(
+        container: ViewGroup,
+        component: SduiComponent.Input,
+        onAction: (String) -> Unit
+    ): View {
         return DsInput(container.context).apply {
             val p = component.props
             val normalizedType = p.inputKeyboardType?.lowercase() ?: "text"
@@ -142,13 +167,13 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
             hint = p.hint
 
             val typeEnum = when (normalizedType) {
-                "cpf"      -> DsInput.KeyboardType.CPF
-                "number"   -> DsInput.KeyboardType.NUMBER
-                "phone"    -> DsInput.KeyboardType.PHONE
-                "email"    -> DsInput.KeyboardType.EMAIL
+                "cpf" -> DsInput.KeyboardType.CPF
+                "number" -> DsInput.KeyboardType.NUMBER
+                "phone" -> DsInput.KeyboardType.PHONE
+                "email" -> DsInput.KeyboardType.EMAIL
                 "password" -> DsInput.KeyboardType.PASSWORD
-                "date"     -> DsInput.KeyboardType.DATE
-                else       -> DsInput.KeyboardType.TEXT
+                "date" -> DsInput.KeyboardType.DATE
+                else -> DsInput.KeyboardType.TEXT
             }
             setKeyboardType(typeEnum)
 
@@ -164,6 +189,9 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
                 p.marginRight.dp(context),
                 p.marginBottom.dp(context)
             )
+
+            setTag(p.id)
+
         }
     }
 

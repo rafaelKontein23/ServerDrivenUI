@@ -1,8 +1,11 @@
 package com.example.serverdrivenui
 
+import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.sdui_engine.presentation.host.SDUIHostView
@@ -15,6 +18,11 @@ class SDUIHostController @Inject constructor(
     private val hostView: SDUIHostView
 ) {
 
+
+    private val _isSuccess = MutableLiveData<Boolean>()
+    val isSuccess: LiveData<Boolean> get() = _isSuccess
+
+
     fun bind(
         lifecycleOwner: LifecycleOwner,
         stateFlow: StateFlow<SDUIViewState>,
@@ -25,8 +33,15 @@ class SDUIHostController @Inject constructor(
             lifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 stateFlow.collect {
                     hostView.render(it, container, onAction)
+                    _isSuccess.value = true
                 }
             }
         }
+    }
+    fun <T : View> findViewBySduiId(
+        container: ViewGroup,
+        id: String
+    ): T? {
+        return container.findViewWithTag(id)
     }
 }
