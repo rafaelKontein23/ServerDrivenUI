@@ -26,6 +26,9 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val container = findViewById<LinearLayout>(R.id.sdui_container)
+
+        sduiHostController.setAppTheme(mapOf("#DB0A88" to "#3E4349"))
+
         sduiHostController.bind(
             lifecycleOwner = this,
             stateFlow = viewModel.uiState,

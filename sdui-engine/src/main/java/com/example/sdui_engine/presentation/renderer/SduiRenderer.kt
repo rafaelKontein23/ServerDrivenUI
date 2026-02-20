@@ -15,4 +15,6 @@ interface SduiRenderer {
     fun getAllInputData(): Map<String, String>
 
     fun clearAllErrors()
+
+    fun setThemeOverrides(colors: Map<String, String>)
 }
