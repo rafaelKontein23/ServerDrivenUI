@@ -9,6 +9,10 @@ class SDUIHostView @Inject constructor(
     private val renderer: SduiRenderer
 ) {
 
+    fun setTheme(colorOverrides: Map<String, String>) {
+        renderer.setThemeOverrides(colorOverrides)
+    }
+
     suspend fun render(
         state: SDUIViewState,
         container: ViewGroup,

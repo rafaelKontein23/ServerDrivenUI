@@ -24,6 +24,7 @@ import com.example.sdui_engine.data.model.SduiTextStyle
 import com.example.sdui_engine.utils.SduiFontCache
 import com.example.sdui_engine.utils.dp
 import javax.inject.Inject
+import androidx.core.graphics.toColorInt
 
 class SduiRendererImpl @Inject constructor() : SduiRenderer {
 
@@ -277,8 +278,6 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
         }
     }
 
-
-    // --- Helpers ---
     private fun createLayoutParams(l: Int, t: Int, r: Int, b: Int): LinearLayout.LayoutParams {
         val params = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -289,9 +288,21 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
         return params
     }
 
+    private var colorOverride: Map<String, String>? = null
+
+    override fun setThemeOverrides(colors: Map<String, String>) {
+        this.colorOverride = colors.mapKeys { it.key.uppercase() }
+    }
+
     private fun parseSafeColor(colorStr: String): Int {
         return try {
-            if (colorStr.isEmpty()) Color.BLACK else Color.parseColor(colorStr)
+            val finalColor = colorOverride?.get(colorStr.uppercase()) ?: colorStr
+
+            if (finalColor.isEmpty()) {
+                Color.BLACK
+            } else {
+                finalColor.toColorInt()
+            }
         } catch (e: Exception) {
             Color.BLACK
         }

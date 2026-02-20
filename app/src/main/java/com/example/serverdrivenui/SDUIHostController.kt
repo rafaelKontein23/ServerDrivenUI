@@ -18,10 +18,12 @@ class SDUIHostController @Inject constructor(
     private val hostView: SDUIHostView
 ) {
 
-
     private val _isSuccess = MutableLiveData<Boolean>()
     val isSuccess: LiveData<Boolean> get() = _isSuccess
 
+    fun setAppTheme(colors: Map<String, String>) {
+        hostView.setTheme(colors)
+    }
 
     fun bind(
         lifecycleOwner: LifecycleOwner,
