@@ -1,9 +1,9 @@
 package com.example.sdui_engine.presentation.renderer
 
+import android.content.Context
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.Typeface
-import android.text.InputType
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
@@ -29,8 +29,6 @@ import androidx.core.graphics.toColorInt
 class SduiRendererImpl @Inject constructor() : SduiRenderer {
 
     private val viewRegistry = mutableMapOf<String, View>()
-
-
 
     override fun findView(id: String): View? = viewRegistry[id]
 
@@ -91,8 +89,7 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
             }
 
             if (p.iconColor.isNotEmpty()) {
-                imageTintList =
-                    ColorStateList.valueOf(parseSafeColor(p.iconColor))
+                imageTintList = ColorStateList.valueOf(parseSafeColor(p.iconColor, context))
             }
 
             scaleType = ImageView.ScaleType.CENTER_INSIDE
@@ -135,7 +132,7 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
             val p = component.props
             text = p.description
             textSize = p.textSize
-            setTextColor(parseSafeColor(p.textColor))
+            setTextColor(parseSafeColor(p.textColor, container.context))
             gravity = parseGravity(p.gravity)
 
             val mainFont = SduiFontCache.getPoppins(context)
@@ -191,8 +188,11 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
                 p.marginBottom.dp(context)
             )
 
-            setTag(p.id)
+            tag = p.id
 
+            setOnClickListener {
+                onAction(p.id)
+            }
         }
     }
 
@@ -209,7 +209,7 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
             contentDescription = p.accessibilityText
 
             if (p.backgroundColor.isNotEmpty()) {
-                setDsBackgroundColor(parseSafeColor(p.backgroundColor))
+                setDsBackgroundColor(parseSafeColor(p.backgroundColor, container.context))
             }
 
             layoutParams = createLayoutParams(
@@ -251,14 +251,14 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
                     start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
                 setSpan(
-                    ForegroundColorSpan(parseSafeColor(p.colorBold)),
+                    ForegroundColorSpan(parseSafeColor(p.colorBold, container.context)),
                     start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
                 )
             }
 
             text = builder
             textSize = p.textSize
-            setTextColor(parseSafeColor(p.textColor))
+            setTextColor(parseSafeColor(p.textColor, container.context))
             gravity = parseGravity(p.gravity)
 
             layoutParams = createLayoutParams(
@@ -294,14 +294,31 @@ class SduiRendererImpl @Inject constructor() : SduiRenderer {
         this.colorOverride = colors.mapKeys { it.key.uppercase() }
     }
 
-    private fun parseSafeColor(colorStr: String): Int {
+    private fun parseSafeColor(colorStr: String, context: Context): Int {
         return try {
-            val finalColor = colorOverride?.get(colorStr.uppercase()) ?: colorStr
+            when {
+                colorStr.startsWith("#") -> colorStr.toColorInt()
 
-            if (finalColor.isEmpty()) {
-                Color.BLACK
-            } else {
-                finalColor.toColorInt()
+                else -> {
+                    val colorRes = when (colorStr.lowercase()) {
+                        "primary_color" -> com.example.sdui_engine.R.color.primary_color
+                        "primary_variant" -> com.example.sdui_engine.R.color.primary_variant
+                        "secondary_color" -> com.example.sdui_engine.R.color.secondary_color
+                        "background_color" -> com.example.sdui_engine.R.color.background_color
+                        "on_primary" -> com.example.sdui_engine.R.color.on_primary
+                        "on_background" -> com.example.sdui_engine.R.color.on_background
+                        "accent_green" -> com.example.sdui_engine.R.color.accent_green
+                        "white" -> com.example.sdui_engine.R.color.white
+                        "black" -> com.example.sdui_engine.R.color.black
+                        else -> null
+                    }
+
+                    if (colorRes != null) {
+                        androidx.core.content.ContextCompat.getColor(context, colorRes)
+                    } else {
+                        Color.BLACK
+                    }
+                }
             }
         } catch (e: Exception) {
             Color.BLACK
