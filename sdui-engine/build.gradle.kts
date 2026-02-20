@@ -47,7 +47,7 @@ afterEvaluate {
 
                 groupId = "com.github.rafaelKontein23"
                 artifactId = "sdui-engine"
-                version = "1.0.2"
+                version = "1.0.7"
             }
         }
     }
